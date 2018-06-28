@@ -17,14 +17,17 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link"
-               href="">
+            <nuxt-link class="nav-link"
+                       :to="{ name: 'settings' }">
               <i class="ion-gear-a"></i>&nbsp;Settings
-            </a>
+            </nuxt-link>
           </li>
           <li class="nav-item">
             <a class="nav-link"
-               href="">&nbsp;{{ $store.state.auth.user.username }}
+               href="">
+              <img v-if="$store.state.auth.user.image"
+                   class="user-pic"
+                   :src="$store.state.auth.user.image">&nbsp;{{ $store.state.auth.user.username }}
             </a>
           </li>
         </template>

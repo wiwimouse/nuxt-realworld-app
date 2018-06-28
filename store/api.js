@@ -41,5 +41,24 @@ export const actions = {
       url: 'tags',
       metohd: 'get'
     })
+  },
+  getCurrentUser(vuex) {
+    return this.$axios({
+      url: 'user',
+      method: 'get',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
+    })
+  },
+  updateUser(vuex, { data }) {
+    return this.$axios({
+      url: 'user',
+      method: 'put',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      },
+      data
+    })
   }
 }
