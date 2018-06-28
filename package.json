@@ -1,0 +1,29 @@
+{
+  "name": "nuxt-realworld-app",
+  "version": "1.0.0",
+  "description": "An exemplary real-world application built with Nuxt.js in 'universal' mode",
+  "author": "LU WEI HSU",
+  "scripts": {
+    "dev": "PORT=4040 nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "precommit": "npm run lint"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.3.1",
+    "cookie": "^0.3.1",
+    "js-cookie": "^2.2.0",
+    "jsonwebtoken": "^8.3.0",
+    "nuxt": "^1.0.0",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.15.0",
+    "eslint-friendly-formatter": "^3.0.0",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-vue": "^4.0.0"
+  }
+}
