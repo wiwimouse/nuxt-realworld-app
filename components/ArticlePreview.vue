@@ -8,7 +8,9 @@
         <span class="date">{{ dateToLocaleString(createdAt) }}</span>
       </div>
       <button class="btn btn-sm pull-xs-right"
-              :class="favorited ? 'btn-primary' : 'btn-outline-primary'">
+              :class="favorited ? 'btn-primary' : 'btn-outline-primary'"
+              :disabled="favoriting"
+              @click="toggleFavoriteArticle">
         <i class="ion-heart"></i> {{ favoritesCount }}
       </button>
     </div>
@@ -73,12 +75,35 @@ export default {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
-      })
+      }),
+      favoriting: false
+    }
+  },
+  computed: {
+    isAuth () {
+      return this.$store.getters['auth/isAuth']
     }
   },
   methods: {
     dateToLocaleString (date) {
       return this.intl.format(new Date(date))
+    },
+    toggleFavoriteArticle () {
+      if (this.isAuth) {
+        let actionName = this.favorited ? 'api/unfavoriteArticle' : 'api/favoriteArticle'
+
+        this.favoriting = true
+        this.$store.dispatch(actionName, { slug: this.slug }).then(res => {
+          let { favorited, favoritesCount } = res.data.article
+          this.favoriting = false
+          this.$emit('update:favorited', favorited)
+          this.$emit('update:favoritesCount', favoritesCount)
+        }).catch(err => {
+          this.favoriting = false
+        })
+      } else {
+        this.$router.push({ name: 'register' })
+      }
     }
   }
 }

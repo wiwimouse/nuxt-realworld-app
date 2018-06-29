@@ -39,7 +39,7 @@ export const actions = {
   getTags() {
     return this.$axios({
       url: 'tags',
-      metohd: 'get'
+      method: 'get'
     })
   },
   getCurrentUser(vuex) {
@@ -59,6 +59,24 @@ export const actions = {
         Authorization: vuex.getters.headerAuth
       },
       data
+    })
+  },
+  favoriteArticle(vuex, { slug }) {
+    return this.$axios({
+      url: `articles/${slug}/favorite`,
+      method: 'post',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
+    })
+  },
+  unfavoriteArticle(vuex, { slug }) {
+    return this.$axios({
+      url: `articles/${slug}/favorite`,
+      method: 'delete',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
     })
   }
 }
