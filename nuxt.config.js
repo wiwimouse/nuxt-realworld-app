@@ -30,7 +30,10 @@ module.exports = {
     ]
   },
   modules: ['@nuxtjs/axios'],
-  plugins: ['~/plugins/axios'],
+  plugins: [
+    '~/plugins/axios',
+    '~/plugins/filters'
+  ],
   /*
   ** Customize the progress bar color
   */
