@@ -1,6 +1,9 @@
 export const getters = {
-  headerAuth(state, getters, rootState, rootGetters) {
-    if (rootGetters['auth/isAuth']) {
+  isAuth(state, getters, rootState, rootGetters) {
+    return rootGetters['auth/isAuth']
+  },
+  headerAuth(state, getters, rootState) {
+    if (getters.isAuth) {
       return `Token ${rootState.auth.jwt}`
     } else {
       return null
@@ -23,6 +26,9 @@ export const actions = {
     return this.$axios({
       url: 'articles',
       method: 'get',
+      headers: {
+        ...(vuex.getters.isAuth && { Authorization: vuex.getters.headerAuth })
+      },
       params
     })
   },
@@ -36,10 +42,53 @@ export const actions = {
       params
     })
   },
+  getArticle(vuex, { slug }) {
+    return this.$axios({
+      url: `articles/${slug}`,
+      method: 'get',
+      headers: {
+        ...(vuex.getters.isAuth && { Authorization: vuex.getters.headerAuth })
+      }
+    })
+  },
+  deleteArticle(vuex, { slug }) {
+    return this.$axios({
+      url: `articles/${slug}`,
+      method: 'delete',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
+    })
+  },
   getTags() {
     return this.$axios({
       url: 'tags',
       method: 'get'
+    })
+  },
+  getComment(veux, { slug }) {
+    return this.$axios({
+      url: `articles/${slug}/comments`,
+      method: 'get'
+    })
+  },
+  deleteComment(vuex, { slug, id }) {
+    return this.$axios({
+      url: `articles/${slug}/comments/${id}`,
+      method: 'delete',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
+    })
+  },
+  addComment(vuex, { data, slug }) {
+    return this.$axios({
+      url: `articles/${slug}/comments`,
+      method: 'post',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      },
+      data
     })
   },
   getCurrentUser(vuex) {
@@ -73,6 +122,24 @@ export const actions = {
   unfavoriteArticle(vuex, { slug }) {
     return this.$axios({
       url: `articles/${slug}/favorite`,
+      method: 'delete',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
+    })
+  },
+  followUser(vuex, { username }) {
+    return this.$axios({
+      url: `profiles/${username}/follow`,
+      method: 'post',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      }
+    })
+  },
+  unfollowUser(vuex, { username }) {
+    return this.$axios({
+      url: `profiles/${username}/follow`,
       method: 'delete',
       headers: {
         Authorization: vuex.getters.headerAuth

@@ -3,126 +3,59 @@
 
     <div class="banner">
       <div class="container">
-
-        <h1>How to build webapps that scale</h1>
-
-        <div class="article-meta">
-          <a href=""><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-          <div class="info">
-            <a href=""
-               class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
-          </div>
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round"></i>
-            &nbsp; Follow Eric Simons
-            <span class="counter">(10)</span>
-          </button>
-          &nbsp;&nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart"></i>
-            &nbsp; Favorite Post
-            <span class="counter">(29)</span>
-          </button>
-        </div>
-
+        <h1>{{ title }}</h1>
+        <article-meta :actions="isCurrentUser ? 'EDIT' : 'FOLLOW'"
+                      :username="author.username"
+                      :image="author.image"
+                      :createdAt="createdAt"
+                      :following.sync="author.following"
+                      :favorited.sync="favorited"
+                      :favoritesCount.sync="favoritesCount"
+                      :slug="slug" />
       </div>
     </div>
 
     <div class="container page">
 
       <div class="row article-content">
-        <div class="col-md-12">
-          <p>
-            Web development technologies have evolved at an incredible clip over the past few years.
-          </p>
-          <h2 id="introducing-ionic">Introducing RealWorld.</h2>
-          <p>It's a great solution for learning how other frameworks work.</p>
+        <div class="col-xs-12">
+          <div v-html="parseMarkdown(body)"></div>
+          <ul class="tag-list">
+            <li v-for="(n, idx) in tagList"
+                class="tag-default tag-pill tag-outline"
+                :key="n + idx">{{ n }}</li>
+          </ul>
         </div>
       </div>
-
-      <hr />
-
+      <hr>
       <div class="article-actions">
-        <div class="article-meta">
-          <a href="profile.html"><img src="http://i.imgur.com/Qr71crq.jpg" /></a>
-          <div class="info">
-            <a href=""
-               class="author">Eric Simons</a>
-            <span class="date">January 20th</span>
-          </div>
-
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-plus-round"></i>
-            &nbsp; Follow Eric Simons
-            <span class="counter">(10)</span>
-          </button>
-          &nbsp;
-          <button class="btn btn-sm btn-outline-primary">
-            <i class="ion-heart"></i>
-            &nbsp; Favorite Post
-            <span class="counter">(29)</span>
-          </button>
-        </div>
+        <article-meta :actions="isCurrentUser ? 'EDIT' : 'FOLLOW'"
+                      :username="author.username"
+                      :image="author.image"
+                      :createdAt="createdAt"
+                      :following.sync="author.following"
+                      :favorited.sync="favorited"
+                      :favoritesCount.sync="favoritesCount"
+                      :slug="slug" />
       </div>
 
       <div class="row">
 
         <div class="col-xs-12 col-md-8 offset-md-2">
 
-          <form class="card comment-form">
-            <div class="card-block">
-              <textarea class="form-control"
-                        placeholder="Write a comment..."
-                        rows="3"></textarea>
-            </div>
-            <div class="card-footer">
-              <img src="http://i.imgur.com/Qr71crq.jpg"
-                   class="comment-author-img" />
-              <button class="btn btn-sm btn-primary">
-                Post Comment
-              </button>
-            </div>
-          </form>
-
-          <div class="card">
-            <div class="card-block">
-              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            </div>
-            <div class="card-footer">
-              <a href=""
-                 class="comment-author">
-                <img src="http://i.imgur.com/Qr71crq.jpg"
-                     class="comment-author-img" />
-              </a>
-              &nbsp;
-              <a href=""
-                 class="comment-author">Jacob Schmidt</a>
-              <span class="date-posted">Dec 29th</span>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-block">
-              <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            </div>
-            <div class="card-footer">
-              <a href=""
-                 class="comment-author">
-                <img src="http://i.imgur.com/Qr71crq.jpg"
-                     class="comment-author-img" />
-              </a>
-              &nbsp;
-              <a href=""
-                 class="comment-author">Jacob Schmidt</a>
-              <span class="date-posted">Dec 29th</span>
-              <span class="mod-options">
-                <i class="ion-edit"></i>
-                <i class="ion-trash-a"></i>
-              </span>
-            </div>
-          </div>
-
+          <comment-form v-if="isAuth"
+                        v-model="commentForm"
+                        :image="currentUser.image"
+                        :submitting="commentFormSubmitting"
+                        @submit="addComment" />
+          <comment v-for="n in commentList"
+                   :key="n.id"
+                   :username="n.author.username"
+                   :image="n.author.image"
+                   :createdAt="n.createdAt"
+                   :body="n.body"
+                   :current-username="currentUser.username"
+                   @delete-comment="deleteComment(n.id)" />
         </div>
 
       </div>
@@ -133,8 +66,73 @@
 </template>
 
 <script>
+import marked from 'marked'
+import ArticleMeta from '@/components/ArticleMeta'
+import CommentForm from '@/components/CommentForm'
+import Comment from '@/components/Comment'
+
 export default {
   name: 'Article',
+  components: {
+    ArticleMeta,
+    CommentForm,
+    Comment
+  },
+  asyncData ({ params, store }) {
+    return Promise.all([
+      store.dispatch('api/getArticle', { slug: params.slug }),
+      store.dispatch('api/getComment', { slug: params.slug })
+    ]).then(([resArticle, resComment]) => {
+      return {
+        ...resArticle.data.article,
+        commentForm: '',
+        commentFormSubmitting: false,
+        commentList: resComment.data.comments
+      }
+    })
+  },
+  computed: {
+    isAuth () {
+      return this.$store.getters['auth/isAuth']
+    },
+    currentUser () {
+      return this.isAuth && this.$store.state.auth.user || null
+    },
+    isCurrentUser () {
+      return this.currentUser.username === this.author.username
+    }
+  },
+  methods: {
+    parseMarkdown (content) {
+      return marked(content)
+    },
+    addComment () {
+      this.commentFormSubmitting = true
+      this.$store
+        .dispatch('api/addComment', {
+          slug: this.slug,
+          data: {
+            comment: {
+              body: this.commentForm
+            }
+          }
+        })
+        .then(res => {
+          this.commentFormSubmitting = false
+          this.commentForm = ''
+          this.commentList.unshift(res.data.comment)
+        })
+    },
+    deleteComment (id) {
+      this.$store.dispatch('api/deleteComment', {
+        slug: this.slug,
+        id
+      }).then(res => {
+        let commentIndex = this.commentList.findIndex(elm => elm.id === id)
+        this.commentList.splice(commentIndex, 1)
+      })
+    }
+  }
 }
 </script>
 
