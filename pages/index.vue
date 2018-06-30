@@ -11,7 +11,7 @@
     <div class="container page">
       <div class="row">
 
-        <div class="col-md-9">
+        <div class="col-xs-12 col-md-9">
           <div class="feed-toggle">
             <ul class="nav nav-pills outline-active">
               <li v-if="isAuth"
@@ -49,7 +49,7 @@
                       :per-page="articleListOptions.limit" />
         </div>
 
-        <div class="col-md-3">
+        <div class="col-xs-12 col-md-3">
           <div class="sidebar">
             <p>Popular Tags</p>
 
