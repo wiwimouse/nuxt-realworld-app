@@ -11,10 +11,10 @@
         </li>
         <template v-if="isAuth">
           <li class="nav-item">
-            <a class="nav-link"
-               href="">
+            <nuxt-link class="nav-link"
+               :to="{ name: 'editor-slug' }">
               <i class="ion-compose"></i>&nbsp;New Post
-            </a>
+            </nuxt-link>
           </li>
           <li class="nav-item">
             <nuxt-link class="nav-link"

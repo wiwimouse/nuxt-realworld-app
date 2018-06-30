@@ -18,9 +18,10 @@
 
     <!-- EDIT -->
     <template v-else-if="actions === 'EDIT'">
-      <a class="btn btn-outline-secondary btn-sm">
+      <nuxt-link class="btn btn-outline-secondary btn-sm"
+      :to="{ name: 'editor-slug', params: { slug } }">
         <i class="ion-edit"></i> Edit Article
-      </a>
+      </nuxt-link>
       &nbsp;&nbsp;
       <button class="btn btn-outline-danger btn-sm"
               :disabled="isDeleteSubmitting"

@@ -51,6 +51,26 @@ export const actions = {
       }
     })
   },
+  createArticle(vuex, { data }) {
+    return this.$axios({
+      url: 'articles',
+      method: 'post',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      },
+      data
+    })
+  },
+  updateArticle(vuex, { data, slug }) {
+    return this.$axios({
+      url: `articles/${slug}`,
+      method: 'put',
+      headers: {
+        Authorization: vuex.getters.headerAuth
+      },
+      data
+    })
+  },
   deleteArticle(vuex, { slug }) {
     return this.$axios({
       url: `articles/${slug}`,
