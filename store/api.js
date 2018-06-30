@@ -12,9 +12,6 @@ export const getters = {
 }
 
 export const actions = {
-  request(vuex, options) {
-    this.$axios(options).then(res => res.data)
-  },
   authentication(vuex, { data }) {
     return this.$axios({
       url: 'users/login',
@@ -128,6 +125,15 @@ export const actions = {
         Authorization: vuex.getters.headerAuth
       },
       data
+    })
+  },
+  getProfile (vuex, { username }) {
+    return this.$axios({
+      url: `profiles/${username}`,
+      method: 'get',
+      headers: {
+        ...(vuex.getters.isAuth && { Authorization: vuex.getters.headerAuth })
+      },
     })
   },
   favoriteArticle(vuex, { slug }) {

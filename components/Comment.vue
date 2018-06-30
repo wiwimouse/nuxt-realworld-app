@@ -4,14 +4,16 @@
       <p class="card-text">{{ body }}</p>
     </div>
     <div class="card-footer">
-      <a href=""
-         class="comment-author">
+      <nuxt-link class="comment-author"
+                 :to="{ name: 'user', params: { user: `@${username}` } }">
         <img class="comment-author-img"
              :src="image">
-      </a>
+      </nuxt-link>
       &nbsp;
-      <a href=""
-         class="comment-author">{{ username }}</a>
+      <nuxt-link class="comment-author"
+                 :to="{ name: 'user', params: { user: `@${username}` } }">
+        {{ username }}
+      </nuxt-link>
       <span class="date-posted">{{ createdAt | date }}</span>
       <span class="mod-options">
         <i v-if="isCurrentUser"

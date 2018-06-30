@@ -6,13 +6,13 @@
       <ul class="nav navbar-nav pull-xs-right">
         <li class="nav-item">
           <!-- Add "active" class when you're on that page" -->
-          <nuxt-link class="nav-link active"
+          <nuxt-link class="nav-link"
                      :to="{ name: 'index' }">Home</nuxt-link>
         </li>
         <template v-if="isAuth">
           <li class="nav-item">
             <nuxt-link class="nav-link"
-               :to="{ name: 'editor-slug' }">
+                       :to="{ name: 'editor-slug' }">
               <i class="ion-compose"></i>&nbsp;New Post
             </nuxt-link>
           </li>
@@ -23,12 +23,12 @@
             </nuxt-link>
           </li>
           <li class="nav-item">
-            <a class="nav-link"
-               href="">
-              <img v-if="$store.state.auth.user.image"
+            <nuxt-link class="nav-link"
+                       :to="{ name: 'user', params: { user: `@${currentUser.username}` } }">
+              <img v-if="currentUser.image"
                    class="user-pic"
-                   :src="$store.state.auth.user.image">&nbsp;{{ $store.state.auth.user.username }}
-            </a>
+                   :src="currentUser.image">&nbsp;{{ currentUser.username }}
+            </nuxt-link>
           </li>
         </template>
         <template v-else>
@@ -52,6 +52,9 @@ export default {
   computed: {
     isAuth () {
       return this.$store.getters['auth/isAuth']
+    },
+    currentUser () {
+      return this.isAuth && this.$store.state.auth.user || {}
     }
   }
 }

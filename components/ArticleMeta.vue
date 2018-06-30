@@ -1,9 +1,13 @@
 <template>
   <div class="article-meta">
-    <a href=""><img :src="image" /></a>
+    <nuxt-link :to="{ name: 'user', params: { user: `@${username}` } }">
+      <img :src="image">
+    </nuxt-link>
     <div class="info">
-      <a href=""
-         class="author">{{ username }}</a>
+      <nuxt-link class="author"
+                 :to="{ name: 'user', params: { user: `@${username}` } }">
+        {{ username }}
+      </nuxt-link>
       <span class="date">{{ createdAt | date }}</span>
     </div>
     <!-- PREVIEW -->
@@ -19,7 +23,7 @@
     <!-- EDIT -->
     <template v-else-if="actions === 'EDIT'">
       <nuxt-link class="btn btn-outline-secondary btn-sm"
-      :to="{ name: 'editor-slug', params: { slug } }">
+                 :to="{ name: 'editor-slug', params: { slug } }">
         <i class="ion-edit"></i> Edit Article
       </nuxt-link>
       &nbsp;&nbsp;
