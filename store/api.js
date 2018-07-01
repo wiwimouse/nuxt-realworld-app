@@ -19,6 +19,13 @@ export const actions = {
       data
     }).then(res => res.data)
   },
+  registration(vuex, { data }) {
+    return this.$axios({
+      url: 'users',
+      method: 'post',
+      data
+    }).then(res => res.data)
+  },
   getArticlesList(vuex, { params }) {
     return this.$axios({
       url: 'articles',
@@ -127,13 +134,13 @@ export const actions = {
       data
     })
   },
-  getProfile (vuex, { username }) {
+  getProfile(vuex, { username }) {
     return this.$axios({
       url: `profiles/${username}`,
       method: 'get',
       headers: {
         ...(vuex.getters.isAuth && { Authorization: vuex.getters.headerAuth })
-      },
+      }
     })
   },
   favoriteArticle(vuex, { slug }) {

@@ -32,6 +32,26 @@ export const mutations = {
 }
 
 export const actions = {
+  register(vuex, { username, email, password }) {
+    return vuex
+      .dispatch(
+        'api/registration',
+        {
+          data: {
+            user: {
+              username,
+              email,
+              password
+            }
+          }
+        },
+        { root: true }
+      )
+      .then(data => {
+        vuex.dispatch('setAuthentication', data.user)
+        vuex.dispatch('setUserInfos', data.user)
+      })
+  },
   authenticate(vuex, { email, password }) {
     return vuex
       .dispatch(
