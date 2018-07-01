@@ -6,28 +6,29 @@
         <div class="col-md-6 offset-md-3 col-xs-12">
           <h1 class="text-xs-center">Sign in</h1>
           <p class="text-xs-center">
-            <a href="">Need an account?</a>
+            <nuxt-link :to="{ name: 'register' }">Need an account?</nuxt-link>
           </p>
 
-          <ul v-if="error"
-              class="error-messages">
-            <li>That email is already taken</li>
-          </ul>
+          <error-messages v-show="Object.keys(error).length"
+                          :error="error" />
 
           <form @submit.prevent="onSubmit">
             <fieldset class="form-group">
               <input class="form-control form-control-lg"
                      type="text"
                      placeholder="Email"
-                     v-model="email">
+                     v-model="email"
+                     :disabled="submitting">
             </fieldset>
             <fieldset class="form-group">
               <input class="form-control form-control-lg"
                      type="password"
                      placeholder="Password"
-                     v-model="password">
+                     v-model="password"
+                     :disabled="submitting">
             </fieldset>
-            <button class="btn btn-lg btn-primary pull-xs-right">Sign in</button>
+            <button class="btn btn-lg btn-primary pull-xs-right"
+                    :disabled="submitting">Sign in</button>
           </form>
         </div>
 
@@ -37,24 +38,32 @@
 </template>
 
 <script>
+import ErrorMessages from '@/components/ErrorMessages'
+
 export default {
-  name: 'LogIn',
+  name: 'Login',
+  components: {
+    ErrorMessages
+  },
   data () {
     return {
       email: '',
       password: '',
-      error: null
+      error: {},
+      submitting: false
     }
   },
   methods: {
     onSubmit () {
+      this.submitting = true
       this.$store.dispatch('auth/authenticate', {
         email: this.email,
         password: this.password
       }).then(() => {
         this.$router.push('/')
       }).catch(err => {
-        this.error = err
+        this.submitting = false
+        this.error = err.response.data.errors
       })
     }
   }
