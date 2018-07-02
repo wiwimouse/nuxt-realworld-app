@@ -99,7 +99,7 @@ export default {
       return this.isAuth && this.$store.state.auth.user || null
     },
     isCurrentUser () {
-      return this.currentUser.username === this.author.username
+      return this.isAuth && this.currentUser.username === this.author.username
     }
   },
   methods: {
