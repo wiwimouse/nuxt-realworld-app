@@ -109,6 +109,11 @@ export default {
       }
     })
   },
+  head () {
+    return {
+      title: 'Home - Conduit'
+    }
+  },
   computed: {
     offsetToPage: {
       get () {

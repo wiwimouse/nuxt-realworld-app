@@ -61,6 +61,11 @@ export default {
       submitting: false
     }
   },
+  head () {
+    return {
+      title: 'Sign up - Conduit'
+    }
+  },
   methods: {
     onSubmit () {
       this.submitting = true

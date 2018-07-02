@@ -114,6 +114,11 @@ export default {
       }
     })
   },
+  head () {
+    return {
+      title: `@${this.profile.username} - Conduit`
+    }
+  },
   computed: {
     isAuth () {
       return this.$store.getters['auth/isAuth']

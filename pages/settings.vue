@@ -63,6 +63,11 @@ export default {
       }
     })
   },
+  head () {
+    return {
+      title: 'Settings - Conduit'
+    }
+  },
   methods: {
     updateUser () {
       this.$store.dispatch('api/updateUser', {

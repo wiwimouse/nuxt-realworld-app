@@ -91,6 +91,11 @@ export default {
       }
     })
   },
+  head () {
+    return {
+      title: `${this.title} - Conduit`
+    }
+  },
   computed: {
     isAuth () {
       return this.$store.getters['auth/isAuth']

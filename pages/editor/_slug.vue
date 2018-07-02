@@ -95,6 +95,11 @@ export default {
       return data
     }
   },
+  head () {
+    return {
+      title: 'Editor - Conduit'
+    }
+  },
   methods: {
     addTag (tag) {
       if (this.tagList.indexOf(tag) === -1) {
