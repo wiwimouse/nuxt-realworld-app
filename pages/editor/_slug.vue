@@ -67,7 +67,8 @@ export default {
   components: {
     ErrorMessages
   },
-  asyncData ({ params, store }) {
+  middleware: 'auth-required',
+  asyncData ({ params, store, redirect }) {
     let data = {
       title: '',
       description: '',
@@ -78,22 +79,25 @@ export default {
       error: {}
     }
 
-    if (params.slug) {
-      return store.dispatch('api/getArticle', { slug: params.slug })
-        .then(res => {
-          let { title, description, body, tagList } = res.data.article
+    return params.slug
+      ? store.dispatch('api/request', {
+        promise: store.dispatch('api/getArticle', { slug: params.slug }),
+        success (res) {
+          let { author, title, description, body, tagList } = res.data.article
+          let currentUsername = store.state.auth.user.username
 
-          return {
-            ...data,
-            title,
-            description,
-            body,
-            tagList
-          }
-        })
-    } else {
-      return data
-    }
+          return author.username === currentUsername
+            ? {
+              ...data,
+              title,
+              description,
+              body,
+              tagList
+            }
+            : redirect({ name: 'index' })
+        }
+      })
+      : data
   },
   head () {
     return {
