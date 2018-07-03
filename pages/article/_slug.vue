@@ -101,10 +101,10 @@ export default {
       return this.$store.getters['auth/isAuth']
     },
     currentUser () {
-      return this.isAuth && this.$store.state.auth.user || null
+      return this.isAuth && this.$store.state.auth.user || {}
     },
     isCurrentUser () {
-      return this.isAuth && this.currentUser.username === this.author.username
+      return this.currentUser.username === this.author.username
     }
   },
   methods: {
