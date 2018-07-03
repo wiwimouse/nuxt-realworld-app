@@ -121,14 +121,13 @@ export const actions = {
     vuex.commit('setUser', user)
   },
   signOut(vuex) {
+    vuex.commit('clearAuth')
+    vuex.commit('clearUser')
+
     if (process.client) {
       jscookie.remove('jwt')
       jscookie.remove('exp')
       localStorage.clear()
-      // localStorage.removeItem('jwt')
-      // localStorage.removeItem('exp')
-      vuex.commit('clearAuth')
-      vuex.commit('clearUser')
     }
   }
 }
