@@ -13,7 +13,6 @@ export const getters = {
 
 export const actions = {
   request(vuex, { promise, success, fail }) {
-    console.log(this)
     return promise
       .then(res => {
         if (typeof success === 'function') {

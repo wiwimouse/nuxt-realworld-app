@@ -79,17 +79,30 @@ export default {
     Comment
   },
   asyncData ({ params, store }) {
-    return Promise.all([
-      store.dispatch('api/getArticle', { slug: params.slug }),
-      store.dispatch('api/getComment', { slug: params.slug })
-    ]).then(([resArticle, resComment]) => {
-      return {
-        ...resArticle.data.article,
-        commentForm: '',
-        commentFormSubmitting: false,
-        commentList: resComment.data.comments
-      }
-    })
+    const requestData = () => {
+      return store.dispatch('api/request', {
+        promise: Promise.all([
+          store.dispatch('api/getArticle', { slug: params.slug }),
+          store.dispatch('api/getComment', { slug: params.slug })
+        ]),
+        success ([resArticle, resComment]) {
+          return {
+            ...resArticle.data.article,
+            commentForm: '',
+            commentFormSubmitting: false,
+            commentList: resComment.data.comments
+          }
+        },
+        fail (error) {
+          if (error.response.status === 401) {
+            store.dispatch('auth/signOut')
+            return requestData()
+          }
+        }
+      })
+    }
+
+    return requestData()
   },
   head () {
     return {

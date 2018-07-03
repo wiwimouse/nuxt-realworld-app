@@ -85,34 +85,47 @@ export default {
     Pagination
   },
   asyncData ({ params, store }) {
-    let username = params.user.slice(1)
-    let data = {
-      options: {
-        author: username,
-        favorited: username,
-        limit: 5,
-        offset: 0,
-      },
-      tab: 'MY',
-      isFollowSubmitting: false
-    }
+    const requestData = () => {
+      let username = params.user.slice(1)
+      let data = {
+        options: {
+          author: username,
+          favorited: username,
+          limit: 5,
+          offset: 0,
+        },
+        tab: 'MY',
+        isFollowSubmitting: false
+      }
 
-    return Promise.all([
-      store.dispatch('api/getProfile', { username }),
-      store.dispatch('api/getArticlesList', {
-        params: {
-          ...data.options,
-          favorited: undefined
+      return store.dispatch('api/request', {
+        promise: Promise.all([
+          store.dispatch('api/getProfile', { username }),
+          store.dispatch('api/getArticlesList', {
+            params: {
+              ...data.options,
+              favorited: undefined
+            }
+          })
+        ]),
+        success ([resProfile, resArticle]) {
+          return {
+            ...data,
+            articles: resArticle.data.articles,
+            articlesCount: resArticle.data.articlesCount,
+            profile: resProfile.data.profile
+          }
+        },
+        fail (error) {
+          if (error.response.status === 401) {
+            store.dispatch('auth/signOut')
+            return requestData()
+          }
         }
       })
-    ]).then(([resProfile, resArticle]) => {
-      return {
-        ...data,
-        articles: resArticle.data.articles,
-        articlesCount: resArticle.data.articlesCount,
-        profile: resProfile.data.profile
-      }
-    })
+    }
+
+    return requestData()
   },
   head () {
     return {
