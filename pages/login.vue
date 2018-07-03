@@ -45,6 +45,7 @@ export default {
   components: {
     ErrorMessages
   },
+  middleware: ['auth-forbidden'],
   data () {
     return {
       email: '',

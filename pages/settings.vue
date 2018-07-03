@@ -56,10 +56,13 @@ export default {
   name: 'Settings',
   middleware: ['auth-required'],
   asyncData ({ store }) {
-    return store.dispatch('api/getCurrentUser').then(res => {
-      return {
-        ...res.data.user,
-        password: ''
+    return store.dispatch('api/request', {
+      promise: store.dispatch('api/getCurrentUser'),
+      success (res) {
+        return {
+          ...res.data.user,
+          password: ''
+        }
       }
     })
   },
