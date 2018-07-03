@@ -121,7 +121,7 @@ export default {
             this.isFollowSubmitting = false
           })
       } else {
-        this.$router.push({ name: 'register' })
+        this.$router.push({ name: 'login' })
       }
     },
     toggleFavoriteArticle () {
@@ -140,7 +140,7 @@ export default {
             this.isSubmitting = false
           })
       } else {
-        this.$router.push({ name: 'register' })
+        this.$router.push({ name: 'login' })
       }
     },
     deleteArticle () {
