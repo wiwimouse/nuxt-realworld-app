@@ -79,35 +79,49 @@ export default {
     ArticlePreview,
     Pagination
   },
-  asyncData ({ store }) {
-    let data = {
-      articleListOptions: {
-        limit: 10,
-        offset: 0,
-        tag: null,
-      },
-      tabCurrent: 'GLOBAL',
-    }
-    let articleActionName = 'api/getArticlesList'
-
-    if (store.getters['auth/isAuth']) {
-      articleActionName = 'api/getArticleFeedsList'
-      data.tabCurrent = 'YOUR'
-    }
-
-    return Promise.all([
-      store.dispatch(articleActionName, {
-        params: data.articleListOptions
-      }),
-      store.dispatch('api/getTags')
-    ]).then(([resArticle, resTags]) => {
-      return {
-        ...data,
-        feeds: resArticle.data.articles,
-        feedsTotal: resArticle.data.articlesCount,
-        tagList: resTags.data.tags,
+  asyncData ({ store, redirect }) {
+    const requestHomeData = function (type) {
+      let actionName
+      let data = {
+        articleListOptions: {
+          limit: 10,
+          offset: 0,
+          tag: null,
+        },
       }
-    })
+
+      if (type === 'GLOBAL') {
+        actionName = 'api/getArticlesList'
+      } else if (type === 'YOUR') {
+        actionName = 'api/getArticleFeedsList'
+      }
+
+      return store.dispatch('api/request', {
+        promise: Promise.all([
+          store.dispatch(actionName, { params: data.articleListOptions }),
+          store.dispatch('api/getTags')
+        ]),
+        success ([resArticle, resTags]) {
+          return {
+            ...data,
+            tabCurrent: type,
+            feeds: resArticle.data.articles,
+            feedsTotal: resArticle.data.articlesCount,
+            tagList: resTags.data.tags,
+          }
+        },
+        fail (error) {
+          if (error.response.status === 401) {
+            store.dispatch('auth/signOut')
+            return requestHomeData('GLOBAL')
+          }
+        }
+      })
+    }
+
+    return store.getters['auth/isAuth']
+      ? requestHomeData('YOUR')
+      : requestHomeData('GLOBAL')
   },
   head () {
     return {

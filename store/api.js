@@ -12,6 +12,36 @@ export const getters = {
 }
 
 export const actions = {
+  request(vuex, { promise, success, fail }) {
+    console.log(this)
+    return promise
+      .then(res => {
+        if (typeof success === 'function') {
+          return success(res)
+        } else {
+          return Promise.resolve(res)
+        }
+      })
+      .catch(err => {
+        if (typeof fail === 'function') {
+          return fail(err)
+        } else {
+          return Promise.reject(err)
+        }
+      })
+      .catch(err => {
+        let code = err.response.status
+
+        if (code === 401) {
+          vuex.dispatch('auth/signOut', null, { root: true })
+          this.$router.replace({ name: 'login' })
+        } else if ([403, 404].indexOf(code) !== -1) {
+          this.$router.replace({ name: 'index' })
+        } else {
+          this.$router.replace({ name: 'index' })
+        }
+      })
+  },
   authentication(vuex, { data }) {
     return this.$axios({
       url: 'users/login',
