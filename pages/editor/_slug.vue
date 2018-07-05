@@ -121,26 +121,30 @@ export default {
         : 'api/createArticle'
 
       this.submitting = true
-      this.$store.dispatch(actionName, {
-        slug: this.$route.params.slug,
-        data: {
-          article: {
-            title: this.title,
-            description: this.description,
-            body: this.body,
-            tagList: this.tagList
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch(actionName, {
+          slug: this.$route.params.slug,
+          data: {
+            article: {
+              title: this.title,
+              description: this.description,
+              body: this.body,
+              tagList: this.tagList
+            }
           }
+        }),
+        success: (res) => {
+          this.$router.push({
+            name: 'article-slug',
+            params: {
+              slug: res.data.article.slug
+            }
+          })
+        },
+        fail: (err) => {
+          this.submitting = false
+          this.error = err.response.data.errors
         }
-      }).then(res => {
-        this.$router.push({
-          name: 'article-slug',
-          params: {
-            slug: res.data.article.slug
-          }
-        })
-      }).catch(err => {
-        this.submitting = false
-        this.error = err.response.data.errors
       })
     }
   }

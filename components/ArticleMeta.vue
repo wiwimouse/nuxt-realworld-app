@@ -10,6 +10,7 @@
       </nuxt-link>
       <span class="date">{{ createdAt | date }}</span>
     </div>
+
     <!-- PREVIEW -->
     <template v-if="actions === 'PREVIEW'">
       <button class="btn btn-sm pull-xs-right"
@@ -111,15 +112,14 @@ export default {
         let actionName = this.following ? 'api/unfollowUser' : 'api/followUser'
 
         this.isFollowSubmitting = true
-        this.$store.dispatch(actionName, { username: this.username })
-          .then(res => {
+        this.$store.dispatch('api/request', {
+          promise: this.$store.dispatch(actionName, { username: this.username }),
+          success: (res) => {
             let { following } = res.data.profile
             this.isFollowSubmitting = false
             this.$emit('update:following', following)
-          })
-          .catch(err => {
-            this.isFollowSubmitting = false
-          })
+          },
+        })
       } else {
         this.$router.push({ name: 'login' })
       }
@@ -129,31 +129,28 @@ export default {
         let actionName = this.favorited ? 'api/unfavoriteArticle' : 'api/favoriteArticle'
 
         this.isSubmitting = true
-        this.$store.dispatch(actionName, { slug: this.slug })
-          .then(res => {
+        this.$store.dispatch('api/request', {
+          promise: this.$store.dispatch(actionName, { slug: this.slug }),
+          success: (res) => {
             let { favorited, favoritesCount } = res.data.article
             this.isSubmitting = false
             this.$emit('update:favorited', favorited)
             this.$emit('update:favoritesCount', favoritesCount)
-          })
-          .catch(err => {
-            this.isSubmitting = false
-          })
+          }
+        })
       } else {
         this.$router.push({ name: 'login' })
       }
     },
     deleteArticle () {
       this.isDeleteSubmitting = true
-      this.$store
-        .dispatch('api/deleteArticle', { slug: this.slug })
-        .then(res => {
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch('api/deleteArticle', { slug: this.slug }),
+        success: (res) => {
           this.isDeleteSubmitting = false
           this.$router.push({ name: 'index' })
-        })
-        .catch(err => {
-          this.isDeleteSubmitting = false
-        })
+        }
+      })
     }
   }
 }

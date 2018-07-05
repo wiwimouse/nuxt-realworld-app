@@ -70,15 +70,19 @@ export default {
   methods: {
     onSubmit () {
       this.submitting = true
-      this.$store.dispatch('auth/register', {
-        username: this.username,
-        email: this.email,
-        password: this.password
-      }).then(() => {
-        this.$router.push({ name: 'index' })
-      }).catch(err => {
-        this.submitting = false
-        this.error = err.response.data.errors
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch('auth/register', {
+          username: this.username,
+          email: this.email,
+          password: this.password
+        }),
+        success: () => {
+          this.$router.push({ name: 'index' })
+        },
+        fail: (err) => {
+          this.submitting = false
+          this.error = err.response.data.errors
+        }
       })
     }
   }

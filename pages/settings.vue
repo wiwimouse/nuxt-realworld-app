@@ -73,17 +73,20 @@ export default {
   },
   methods: {
     updateUser () {
-      this.$store.dispatch('api/updateUser', {
-        data: {
-          email: this.email,
-          username: this.username,
-          password: this.password || undefined,
-          image: this.image,
-          bio: this.bio
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch('api/updateUser', {
+          data: {
+            email: this.email,
+            username: this.username,
+            password: this.password || undefined,
+            image: this.image,
+            bio: this.bio
+          }
+        }),
+        success: (res) => {
+          this.$store.commit('auth/setUser', res.data.user)
+          this.$router.push({ name: 'index' })
         }
-      }).then(res => {
-        this.$store.commit('auth/setUser', res.data.user)
-        this.$router.push({ name: 'index' })
       })
     },
     signOut () {

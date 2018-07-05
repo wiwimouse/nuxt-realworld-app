@@ -169,11 +169,14 @@ export default {
         actionName = 'api/getArticleFeedsList'
       }
 
-      return this.$store.dispatch(actionName, {
-        params: this.articleListOptions
-      }).then(res => {
-        this.feeds = res.data.articles
-        this.feedsTotal = res.data.articlesCount
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch(actionName, {
+          params: this.articleListOptions
+        }),
+        success: (res) => {
+          this.feeds = res.data.articles
+          this.feedsTotal = res.data.articlesCount
+        }
       })
     },
   }

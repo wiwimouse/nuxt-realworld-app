@@ -126,28 +126,32 @@ export default {
     },
     addComment () {
       this.commentFormSubmitting = true
-      this.$store
-        .dispatch('api/addComment', {
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch('api/addComment', {
           slug: this.slug,
           data: {
             comment: {
               body: this.commentForm
             }
           }
-        })
-        .then(res => {
+        }),
+        success: (res) => {
           this.commentFormSubmitting = false
           this.commentForm = ''
           this.commentList.unshift(res.data.comment)
-        })
+        }
+      })
     },
     deleteComment (id) {
-      this.$store.dispatch('api/deleteComment', {
-        slug: this.slug,
-        id
-      }).then(res => {
-        let commentIndex = this.commentList.findIndex(elm => elm.id === id)
-        this.commentList.splice(commentIndex, 1)
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch('api/deleteComment', {
+          slug: this.slug,
+          id
+        }),
+        success: (res) => {
+          let commentIndex = this.commentList.findIndex(elm => elm.id === id)
+          this.commentList.splice(commentIndex, 1)
+        }
       })
     }
   }

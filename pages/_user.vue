@@ -168,15 +168,18 @@ export default {
         paramByTab = 'favorited'
       }
 
-      return this.$store.dispatch('api/getArticlesList', {
-        params: {
-          limit: this.options.limit,
-          offset: this.options.offset,
-          [paramByTab]: this.options[paramByTab]
+      this.$store.dispatch('api/request', {
+        promise: this.$store.dispatch('api/getArticlesList', {
+          params: {
+            limit: this.options.limit,
+            offset: this.options.offset,
+            [paramByTab]: this.options[paramByTab]
+          }
+        }),
+        success: (res) => {
+          this.articles = res.data.articles
+          this.articlesCount = res.data.articlesCount
         }
-      }).then(res => {
-        this.articles = res.data.articles
-        this.articlesCount = res.data.articlesCount
       })
     },
     toggleFollowUser () {
@@ -184,16 +187,18 @@ export default {
         let actionName = this.profile.following ? 'api/unfollowUser' : 'api/followUser'
 
         this.isFollowSubmitting = true
-        this.$store.dispatch(actionName, { username: this.profile.username })
-          .then(res => {
+        this.$store.dispatch('api/request', {
+          promise: this.$store.dispatch(actionName, { username: this.profile.username }),
+          success: (res) => {
             this.profile = res.data.profile
             this.isFollowSubmitting = false
-          })
-          .catch(err => {
+          },
+          fail: (err) => {
             this.isFollowSubmitting = false
-          })
+          }
+        })
       } else {
-        this.$router.push({ name: 'register' })
+        this.$router.push({ name: 'login' })
       }
     }
   }

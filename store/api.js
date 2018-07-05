@@ -12,6 +12,7 @@ export const getters = {
 }
 
 export const actions = {
+  // Api Constructor
   request(vuex, { promise, success, fail }) {
     return promise
       .then(res => {
@@ -41,6 +42,8 @@ export const actions = {
         }
       })
   },
+
+  // Auth
   authentication(vuex, { data }) {
     return this.$axios({
       url: 'users/login',
@@ -55,6 +58,8 @@ export const actions = {
       data
     }).then(res => res.data)
   },
+
+  // Article
   getArticlesList(vuex, { params }) {
     return this.$axios({
       url: 'articles',
@@ -113,12 +118,16 @@ export const actions = {
       }
     })
   },
+
+  // Tag
   getTags() {
     return this.$axios({
       url: 'tags',
       method: 'get'
     })
   },
+
+  // Comment
   getComment(veux, { slug }) {
     return this.$axios({
       url: `articles/${slug}/comments`,
@@ -144,6 +153,8 @@ export const actions = {
       data
     })
   },
+
+  // User
   getCurrentUser(vuex) {
     return this.$axios({
       url: 'user',
@@ -172,6 +183,8 @@ export const actions = {
       }
     })
   },
+
+  // Favorite
   favoriteArticle(vuex, { slug }) {
     return this.$axios({
       url: `articles/${slug}/favorite`,
@@ -190,6 +203,8 @@ export const actions = {
       }
     })
   },
+
+  // Follow
   followUser(vuex, { username }) {
     return this.$axios({
       url: `profiles/${username}/follow`,
