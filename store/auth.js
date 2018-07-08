@@ -81,9 +81,9 @@ export const actions = {
     vuex.commit('setAuth', { token: user.token, expiration: jwtPayload.exp })
   },
   checkAuthentication(vuex, req) {
-    let token
-    let expiration
-    let jwtPayload
+    let token = ''
+    let expiration = 0
+    let jwtPayload = {}
     let date = new Date()
 
     if (req) {
@@ -92,6 +92,7 @@ export const actions = {
 
         if (reqCookie.jwt) {
           jwtPayload = jwt.decode(reqCookie.jwt)
+
           if (jwtPayload.exp) {
             token = reqCookie.jwt
             expiration = jwtPayload.exp
@@ -103,7 +104,7 @@ export const actions = {
       expiration = localStorage.getItem('exp')
     }
 
-    if (!token || date.getTime > expiration * 1000) {
+    if (!token || date.getTime() > expiration * 1000) {
       vuex.dispatch('signOut')
     } else {
       vuex.commit('setAuth', {
