@@ -122,7 +122,7 @@ export default {
   },
   methods: {
     parseMarkdown (content) {
-      return marked(content)
+      return marked(content, { sanitize: true })
     },
     addComment () {
       this.commentFormSubmitting = true
